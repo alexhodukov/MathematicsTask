@@ -1,4 +1,4 @@
-package main;
+package com.mathtask;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,6 +10,10 @@ import java.util.Stack;
 
 public class Calculator {
 	
+	private final int neededResult = 24;
+	
+	private Generator generator;
+
 	private final Map<String, Integer> operations = new HashMap<>();
 	{
 		operations.put("+", 1);
@@ -18,44 +22,55 @@ public class Calculator {
 		operations.put("/", 2);
 	}
 	
-	public Stack<String> translate(String src) {
+	public void computeExpression(String src) {
+		int result = calculate(src);
+		if (isRightResult(result)) {
+			generator.stopGenerate();
+		}
+	}
+	
+	private boolean isRightResult(int result) {
+		return result == neededResult;
+	}
+	
+	private Stack<String> translateRpn(String src) {
 		List<String> list = Arrays.asList(src.split(" "));
 		Iterator<String> it = list.iterator();
 		Stack<String> out = new Stack<>();
-		Stack<String> op = new Stack<>();
+		Stack<String> oper = new Stack<>();
 		while (it.hasNext()) {
 			String token = it.next();
 			if (operations.containsKey(token)) {
-				int pr = operations.get(token);
-				if (op.isEmpty() | (!op.isEmpty() && (!isOperator(op.peek()) || pr > operations.get(op.peek())))) {
-					op.push(token);
+				int prior = operations.get(token);
+				if (oper.isEmpty() || (!oper.isEmpty() && (!isOperator(oper.peek()) || prior > operations.get(oper.peek())))) {
+					oper.push(token);
 				} else {
-					while (!op.isEmpty() && pr <= operations.get(op.peek())) {
-						out.push(op.pop());
+					while (!oper.isEmpty() && isOperator(oper.peek()) && prior <= operations.get(oper.peek())) {
+						out.push(oper.pop());
 					}
-					op.push(token);
+					oper.push(token);
 				}
-			} else if ("(".equals(token)) {
-				op.push(token);
-			} else if (")".equals(token)) {
-				while (!op.isEmpty() && !op.peek().equals("(")) {
-					out.push(op.pop());
+			} else if (isLeftBracket(token)) {
+				oper.push(token);
+			} else if (isRightBracket(token)) {
+				while (!oper.isEmpty() && !isLeftBracket(oper.peek())) {
+					out.push(oper.pop());
 				}
-				op.pop();
+				oper.pop();
 			} else {
 				out.push(token);
 			}
 		}
 		
-		while (!op.isEmpty()) {
-			out.push(op.pop());
+		while (!oper.isEmpty()) {
+			out.push(oper.pop());
 		}
 		
 		return out;
 	}
 	
 	public int calculate(String src) {
-		Stack<String> stack = translate(src);
+		Stack<String> stack = translateRpn(src);
 		Collections.reverse(stack);
 		Stack<Operand> calc = new Stack<>();
 		boolean isDivByZero = false;
@@ -79,13 +94,12 @@ public class Calculator {
 			} else {
 				calc.push(Operand.parseOperand(token));
 			}
-			System.out.println("stack " + stack + ",    calc " + calc + ",   token " + token);
 		}
 		
-		if (isDivByZero | (!calc.isEmpty() && calc.pop().isResultFraction())) {
+		if (isDivByZero | (!calc.isEmpty() && calc.peek().isResultFraction())) {
 			return 0;
 		} else {
-			return calc.pop().getUsual();	
+			return calc.pop().getUsualNumber();	
 		}
 	}
 	
@@ -94,13 +108,19 @@ public class Calculator {
 	}
 	
 	public boolean isOperandZero(Operand op) {
-		return op.getUsual() == 0;
+		return op.getUsualNumber() == 0;
 	}
-			
+	
+	private boolean isLeftBracket(String s) {
+		return "(".equals(s);
+	}
 
-	public static void main(String[] args) {
-		System.out.println(new Calculator().calculate("8 + 3 / ( 7 - 5 )"));
-
+	private boolean isRightBracket(String s) {
+		return ")".equals(s);
+	}
+	
+	public void setGenerator(Generator generator) {
+		this.generator = generator;
 	}
 
 }

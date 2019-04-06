@@ -1,4 +1,4 @@
-package main;
+package com.mathtask;
 
 public class Bracket {
 	private boolean[] brackets;
