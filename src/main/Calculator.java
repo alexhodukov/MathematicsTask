@@ -57,33 +57,49 @@ public class Calculator {
 	public int calculate(String src) {
 		Stack<String> stack = translate(src);
 		Collections.reverse(stack);
-		Stack<String> calc = new Stack<>();
-		while (!stack.isEmpty()) {
+		Stack<Operand> calc = new Stack<>();
+		boolean isDivByZero = false;
+		while (!stack.isEmpty() && !isDivByZero) {
 			String token = stack.pop();
 			if (isOperator(token)) {
-				Integer x1 = Integer.parseInt(calc.pop());
-				Integer x2 = Integer.parseInt(calc.pop());
+				Operand x1 = calc.pop();
+				Operand x2 = calc.pop();
 				switch (token) {
-				case "+" : calc.push(String.valueOf(x2 + x1)); break;
-				case "-" : calc.push(String.valueOf(x2 - x1)); break;
-				case "*" : calc.push(String.valueOf(x2 * x1)); break;
-				case "/" : calc.push(String.valueOf(x2 / x1)); break;
-				}
+				case "+" : calc.push(x2.add(x1)); break;
+				case "-" : calc.push(x2.subtract(x1)); break;
+				case "*" : calc.push(x2.multiply(x1)); break;
+				case "/" : {
+					if (!isOperandZero(x1)) {
+						calc.push(x2.divide(x1));
+					} else {
+						isDivByZero = true;
+					}
+				} break;
+				} 
 			} else {
-				calc.push(token);
+				calc.push(Operand.parseOperand(token));
 			}
+			System.out.println("stack " + stack + ",    calc " + calc + ",   token " + token);
 		}
 		
-		return Integer.parseInt(calc.pop());
+		if (isDivByZero | (!calc.isEmpty() && calc.pop().isResultFraction())) {
+			return 0;
+		} else {
+			return calc.pop().getUsual();	
+		}
 	}
 	
 	public boolean isOperator(String token) {
 		return operations.containsKey(token);
 	}
+	
+	public boolean isOperandZero(Operand op) {
+		return op.getUsual() == 0;
+	}
 			
 
 	public static void main(String[] args) {
-		System.out.println(new Calculator().calculate("8 + 2 * ( 7 - 5 )"));
+		System.out.println(new Calculator().calculate("8 + 3 / ( 7 - 5 )"));
 
 	}
 
