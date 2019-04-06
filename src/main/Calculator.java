@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-public class ConverterRpn {
+public class Calculator {
 	
 	private final Map<String, Integer> operations = new HashMap<>();
 	{
@@ -83,7 +83,7 @@ public class ConverterRpn {
 			
 
 	public static void main(String[] args) {
-		System.out.println(new ConverterRpn().calculate("3 + 4 * 2 / ( 6 - 5 )"));
+		System.out.println(new Calculator().calculate("8 + 2 * ( 7 - 5 )"));
 
 	}
 
