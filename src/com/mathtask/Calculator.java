@@ -10,9 +10,8 @@ import java.util.Stack;
 
 public class Calculator {
 	
-	private final int neededResult = 24;
-	
 	private Generator generator;
+	private final int neededResult = 24;
 
 	private final Map<String, Integer> operations = new HashMap<>();
 	{
@@ -123,4 +122,5 @@ public class Calculator {
 		this.generator = generator;
 	}
 
+	
 }

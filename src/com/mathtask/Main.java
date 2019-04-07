@@ -1,29 +1,28 @@
 package com.mathtask;
 
 public class Main {
+	private Generator generator;
 	private Builder builder;
 	private Calculator calculator;
-	private Generator generator;
 	
 	public Main() {
+		this.generator = new Generator();
 		this.calculator = new Calculator();
+		this.builder = new Builder();
 		
-		generator = new Generator(calculator);
+		generator.setBuilder(builder);
 		generator.generateBrackets();
-		
+		builder.setCalculator(calculator);
 		calculator.setGenerator(generator);
-		
-		builder = new Builder(generator);
-		generator.setBuild(builder);
 	}
 	
 	public static void main(String[] args) {
 		Main main = new Main();
-		System.out.println(main.canBeEqualTo24(new int[]{4, 1, 3, 2}));
+		System.out.println(main.canBeEqualTo24(new int[]{4, 1, 8, 7}));
 	}
 	
 	public boolean canBeEqualTo24(int[] nums) {
-		builder.runGeneration(nums);
+		generator.runGeneration(nums);
 		
 		return generator.isRightExpr();
 	}

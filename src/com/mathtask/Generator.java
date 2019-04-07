@@ -1,15 +1,13 @@
 package com.mathtask;
 
 public class Generator {
-	private Calculator calculator;
 	private Builder builder;
 	private int[] numbers;
 	private char[] availOper;
 	private Bracket[] brackets;
 	private boolean isRightExpr;
 
-	public Generator(Calculator calc) {
-		this.calculator = calc;
+	public Generator() {
 		this.availOper = new char[]{'+', '-', '*', '/'};
 		this.numbers = new int[4];
 	}
@@ -24,7 +22,11 @@ public class Generator {
 				new Bracket(new boolean[]{true, false, true})};
 	}
 	
-	public void generateNumbers(int[] ar, int level) {
+	public void runGeneration(int[] nums) {
+		generateNumbers(nums, nums.length);
+	}
+	
+	private void generateNumbers(int[] ar, int level) {
 		int size = ar.length;
 		int i = size - level;
 		while (i < size && !isRightExpr) {
@@ -51,7 +53,7 @@ public class Generator {
 			if (level == 1) {
 				int j = 0;
 				while (j < brackets.length && !isRightExpr) {
-					checkSequence(ar, brackets[j].getBrackets());
+					buildSequence(ar, brackets[j].getBrackets());
 					j++;
 				}
 			}
@@ -68,16 +70,15 @@ public class Generator {
 		return ar;
 	}
 	
-	private void checkSequence(char[] ch, boolean[] brackets) {
-		String sequence = builder.buildSequence(numbers, ch, brackets);
-		calculator.computeExpression(sequence);
+	private void buildSequence(char[] ch, boolean[] brackets) {
+		builder.buildSequence(numbers, ch, brackets);
 	}
 	
 	public void stopGenerate() {
 		this.isRightExpr = true;
 	}
 
-	public void setBuild(Builder builder) {
+	public void setBuilder(Builder builder) {
 		this.builder = builder;
 	}
 	

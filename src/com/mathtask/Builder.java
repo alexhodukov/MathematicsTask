@@ -1,17 +1,10 @@
 package com.mathtask;
 
 public class Builder {
-	private Generator generator;
 	
-	public Builder(Generator generator) {
-		this.generator = generator;
-	}
-	
-	public void runGeneration(int[] nums) {
-		generator.generateNumbers(nums, nums.length);
-	}
-	
-	public String buildSequence(int[] ar, char[] ch, boolean[] brackets) {
+	private Calculator calculator;
+
+	public void buildSequence(int[] ar, char[] ch, boolean[] brackets) {
 		StringBuilder build = new StringBuilder();
 		boolean isBracket = false;
 		
@@ -37,7 +30,10 @@ public class Builder {
 			}
 		}
 		
-		return new String(build);
+		calculator.computeExpression(build.toString());
 	}
-
+	
+	public void setCalculator(Calculator calculator) {
+		this.calculator = calculator;
+	}
 }
