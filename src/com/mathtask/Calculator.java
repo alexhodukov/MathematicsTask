@@ -98,7 +98,7 @@ public class Calculator {
 		if (isDivByZero | (!calc.isEmpty() && calc.peek().isResultFraction())) {
 			return 0;
 		} else {
-			return calc.pop().getUsualNumber();	
+			return calc.pop().getResult();	
 		}
 	}
 	

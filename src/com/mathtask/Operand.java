@@ -120,6 +120,14 @@ public class Operand {
 		return num % denom != 0;
 	}
 	
+	public int getResult() {
+		if (mode == Mode.NORMAL) {
+			return usualNumber;	
+		} else {
+			return num / denom;
+		}
+	}
+	
 	private boolean isModeNormal(Operand op) {
 		return mode == Mode.NORMAL && op.getMode() == Mode.NORMAL;
 	}
